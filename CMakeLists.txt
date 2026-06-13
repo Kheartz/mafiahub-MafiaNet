@@ -45,6 +45,10 @@ find_package(Threads REQUIRED)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(MafiaNetHelpers)
 
+# RakVoice is built into the core library, so its dependencies (Opus, RNNoise)
+# are always fetched, before the Source subdirectory that consumes them.
+include(FetchVoiceDependencies)
+
 # Platform-specific settings
 if(WIN32)
     add_compile_definitions(
@@ -58,7 +62,7 @@ add_subdirectory(Source)
 
 # Samples and extensions
 if(MAFIANET_BUILD_SAMPLES)
-    # Fetch dependencies (bzip2, miniupnpc, opus, rnnoise)
+    # Fetch sample/extension dependencies (bzip2, miniupnpc, jansson)
     include(FetchDependencies)
     add_subdirectory(Samples)
     add_subdirectory(DependentExtensions)
