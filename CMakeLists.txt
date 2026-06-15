@@ -54,6 +54,13 @@ if(WIN32)
     add_compile_definitions(
         _CRT_SECURE_NO_DEPRECATE
         _CRT_NONSTDC_NO_DEPRECATE
+        # Suppress the legacy Winsock 1.1 header. Several samples include
+        # <windows.h> before the MafiaNet headers that pull in <winsock2.h>;
+        # without this, windows.h drags in winsock.h first and winsock2.h then
+        # redefines sockaddr/fd_set/etc. (C2011/C2375). winsock2.h itself
+        # defines _WINSOCKAPI_ for the same reason, so predefining it globally
+        # is consistent and harmless for the core library.
+        _WINSOCKAPI_
     )
 endif()
 

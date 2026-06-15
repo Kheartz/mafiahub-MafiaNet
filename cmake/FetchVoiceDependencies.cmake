@@ -98,11 +98,22 @@ if(NOT TARGET rnnoise)
             ${opus_SOURCE_DIR}/include        # Contains opus_defines.h
     )
     target_compile_definitions(rnnoise PRIVATE COMPILE_OPUS=1)
-    set_target_properties(rnnoise PROPERTIES FOLDER "Dependencies")
+    # Built static but linked into the shared libmafianet.so, so every object
+    # must be position-independent (otherwise: "relocation R_X86_64_PC32 ...
+    # can not be used when making a shared object; recompile with -fPIC").
+    set_target_properties(rnnoise PROPERTIES
+        FOLDER "Dependencies"
+        POSITION_INDEPENDENT_CODE ON
+    )
 endif()
 
 if(TARGET opus)
-    set_target_properties(opus PROPERTIES FOLDER "Dependencies")
+    # Same reason as rnnoise above: PIC is required to link the static opus
+    # archive into the shared MafiaNet library.
+    set_target_properties(opus PROPERTIES
+        FOLDER "Dependencies"
+        POSITION_INDEPENDENT_CODE ON
+    )
 endif()
 
 message(STATUS "MafiaNet voice dependencies fetched successfully")
